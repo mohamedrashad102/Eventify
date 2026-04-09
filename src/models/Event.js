@@ -24,6 +24,17 @@ const eventSchema = new Schema(
         category: {
             type: String,
             required: [true, "Event category is required"],
+            enum: {
+                values: [
+                    "concert",
+                    "conference",
+                    "workshop",
+                    "seminar",
+                    "sports",
+                    "other",
+                ],
+                message: "Invalid event category",
+            },
             trim: true,
         },
         capacity: {

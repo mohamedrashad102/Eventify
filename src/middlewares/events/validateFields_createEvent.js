@@ -1,21 +1,8 @@
-const validateRequest = (req, res, next) => {
+import mongoose from "mongoose";
+
+const validateFields_createEvent = (req, res, next) => {
     const data = req.body;
-    // ensure body exists and not empty
-    if (!data || Object.keys(data).length === 0) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Request body is required" });
-    }
 
-    // check data format
-    if (typeof data !== "object") {
-        return res.status(400).json({
-            success: false,
-            message: "Request body must be a valid JSON object",
-        });
-    }
-
-    // ============== Validate fields ==============
     // Validate title
     if (!data.title) {
         return res
@@ -136,7 +123,20 @@ const validateRequest = (req, res, next) => {
         });
     }
 
+    // Ensure createdBy exists and is a valid ObjectId
+    const creatorId = req.user?._id || req.user?.id || req.body.createdBy;       // based on how auth middleware sets user info
+    if (!creatorId) {
+        return res
+            .status(400)
+            .json({ success: false, message: "The event creator is required" });
+    }
+    if (!mongoose.Types.ObjectId.isValid(creatorId)) {
+        return res
+            .status(400)
+            .json({ success: false, message: "The event creator is not a valid ObjectId" });
+    }
+
     next();
 };
 
-export default validateRequest;
+export default validateFields_createEvent;
