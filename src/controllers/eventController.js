@@ -19,30 +19,30 @@ const getEvents = async (req, res) => {
             sort = "date",
             order = "desc",
         } = req.query;
-    
+
         // Handle pagination parameters
         const pageNumber = Math.max(parseInt(page) || 1, 1);
         const limitNumber = Math.max(parseInt(limit) || 10, 1);
         const skip = (pageNumber - 1) * limitNumber;
-    
+
         // Build filter criteria object
         const filter = {};
-    
+
         if (search) {
             filter.$or = [
                 { title: { $regex: search, $options: "i" } },
                 { description: { $regex: search, $options: "i" } },
             ];
         }
-    
+
         if (category) {
             filter.category = category;
         }
-    
+
         if (location) {
             filter.location = { $regex: location, $options: "i" };
         }
-    
+
         if (minPrice !== undefined || maxPrice !== undefined) {
             filter.price = {};
             if (minPrice !== undefined && minPrice !== "") {
@@ -52,7 +52,7 @@ const getEvents = async (req, res) => {
                 filter.price.$lte = Number(maxPrice);
             }
         }
-    
+
         if (startDate || endDate) {
             filter.date = {};
             if (startDate) {
@@ -62,11 +62,11 @@ const getEvents = async (req, res) => {
                 filter.date.$lte = new Date(endDate);
             }
         }
-    
+
         const allowedSortFields = ["date", "price", "title", "createdAt"];
         const sortField = allowedSortFields.includes(sort) ? sort : "date";
         const sortOrder = order === "asc" ? 1 : -1;
-    
+
         // Get events and total count in parallel
         const [events, totalEvents] = await Promise.all([
             Event.find(filter)
@@ -76,9 +76,9 @@ const getEvents = async (req, res) => {
                 .limit(limitNumber),
             Event.countDocuments(filter),
         ]);
-    
+
         const totalPages = Math.ceil(totalEvents / limitNumber);
-    
+
         // Send response with events and pagination info
         res.status(200).json({
             success: true,
@@ -100,14 +100,12 @@ const getEvents = async (req, res) => {
     }
 };
 
-
-
 // ======= Get single event (public) =======
 const getEvent = async (req, res) => {
     try {
         // extract id from route params
         const { id } = req.params;
-    
+
         // ensure id exists and valid
         if (!id) {
             return res
@@ -119,21 +117,20 @@ const getEvent = async (req, res) => {
                 .status(400)
                 .json({ success: false, message: "Invalid Event ID" });
         }
-    
+
         // search for event by id
-        const existingEvent = await Event.findById(id)
-        .populate(
+        const existingEvent = await Event.findById(id).populate(
             "createdBy",
             "_id name",
         );
-    
+
         // ensure it exists
         if (!existingEvent) {
             return res
                 .status(404)
                 .json({ success: false, message: "Event not found" });
         }
-    
+
         // send reposnse with event data
         res.status(200).json({
             success: true,
@@ -147,14 +144,19 @@ const getEvent = async (req, res) => {
     }
 };
 
-
-
 // ======= Create new event (admin only) =======
 const createEvent = async (req, res) => {
     try {
-        const { title, description, date, location, category, capacity, price } =
-            req.body;
-        const creatorId = req.user?._id || req.user?.id || req.body.createdBy;       // based on how auth middleware sets user info
+        const {
+            title,
+            description,
+            date,
+            location,
+            category,
+            capacity,
+            price,
+        } = req.body;
+        const creatorId = req.user?._id || req.user?.id || req.body.createdBy; // based on how auth middleware sets user info
 
         if (!creatorId || !mongoose.Types.ObjectId.isValid(creatorId)) {
             return res.status(400).json({
@@ -162,7 +164,7 @@ const createEvent = async (req, res) => {
                 message: "The event creator not found",
             });
         }
-    
+
         // create new event instance + save it in db
         const newEvent = new Event({
             title,
@@ -175,55 +177,65 @@ const createEvent = async (req, res) => {
             createdBy: creatorId,
         });
         await newEvent.save();
-    
+
         // send response with the created event data
         res.status(201).json({
             success: true,
             message: "Event created successfully",
-            data: newEvent
+            data: newEvent,
         });
     } catch (error) {
         error.status = 500;
         error.message = "Server error while creating event";
         throw error;
     }
-
 };
-
-
-
 
 // ======= Update event (admin only) =======
 const updateEvent = async (req, res) => {
     try {
         // extract id from url params
         const { id } = req.params;
-        
+
         // ensure id exists and valid
         if (!id) {
-            return res.status(400).json({ success: false, message: "Event ID is required" });
+            return res
+                .status(400)
+                .json({ success: false, message: "Event ID is required" });
         }
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ success: false, message: "Invalid Event ID" });
+            return res
+                .status(400)
+                .json({ success: false, message: "Invalid Event ID" });
         }
-        
+
         // search for event by id
         const existingEvent = await Event.findById(id);
-        
+
         // ensure event exists
         if (!existingEvent) {
-            return res.status(404).json({ success: false, message: "Event not found" });
+            return res
+                .status(404)
+                .json({ success: false, message: "Event not found" });
         }
-    
+
         // update event fields + save
-        const updatableFields = ["title", "description", "date", "location", "category", "capacity", "price"];
+        const updatableFields = [
+            "title",
+            "description",
+            "date",
+            "location",
+            "category",
+            "capacity",
+            "price",
+        ];
         updatableFields.forEach((field) => {
             if (req.body.hasOwnProperty(field)) {
                 existingEvent[field] = req.body[field];
             }
         });
         await existingEvent.save();
-    
+
         // send reposnse with the updated event data
         res.status(200).json({
             success: true,
@@ -237,15 +249,41 @@ const updateEvent = async (req, res) => {
     }
 };
 
-
 // ======= Delete event (admin only) =======
 const deleteEvent = async (req, res) => {
-    const { id } = req.params;
-    // ensure id exists and valid
-    // search for event by id
-    // ensure event exists
-    // delete event
-    // send response confirming deletion
+    try {
+        const { id } = req.params;
+
+        // ensure id exists and valid
+        if (!id) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Event ID is required" });
+        }
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Invalid Event ID" });
+        }
+
+        // delete event
+        const deletedEvent = await Event.findByIdAndDelete(id);
+        if (!deletedEvent) {
+            return res
+                .status(404)
+                .json({ success: false, message: "Event not found" });
+        }
+
+        // send response confirming deletion
+        res.status(200).json({
+            success: true,
+            message: "Event deleted successfully",
+        });
+    } catch (error) {
+        error.status = 500;
+        error.message = "Server error while deleting event";
+        throw error;
+    }
 };
 
 export { getEvents, getEvent, createEvent, updateEvent, deleteEvent };
