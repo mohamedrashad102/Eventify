@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getEvents, getEvent, createEvent, updateEvent, deleteEvent } from '../controllers/eventController.js';
+import validateRequest from '../../middlewares/validateRequest.js';
 
 const router = Router();
 
@@ -10,7 +11,7 @@ router.get('/', getEvents);
 router.get('/:id', getEvent);
 
 // ======= Create new event (admin only) =======
-router.post('/', createEvent);
+router.post('/', validateRequest, createEvent);
 
 // ======= Update event (admin only) =======
 router.put('/:id', updateEvent);
