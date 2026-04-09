@@ -25,41 +25,45 @@ Complete documentation for all API endpoints in the Eventify system.
 **Description:** Register a new user account
 
 **Request Body:**
+
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "SecurePass123!"
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "SecurePass123!"
 }
 ```
 
 **Validation Rules:**
+
 - `name`: Required, 2-50 characters
 - `email`: Required, valid email format, unique
 - `password`: Required, minimum 6 characters, must contain uppercase, lowercase, number
 
 **Success Response (201):**
+
 ```json
 {
-  "success": true,
-  "message": "User registered successfully",
-  "data": {
-    "user": {
-      "_id": "507f1f77bcf86cd799439011",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "role": "user"
-    },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
+    "success": true,
+    "message": "User registered successfully",
+    "data": {
+        "user": {
+            "_id": "507f1f77bcf86cd799439011",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "role": "user"
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
 }
 ```
 
 **Error Response (400):**
+
 ```json
 {
-  "success": false,
-  "message": "Email already exists"
+    "success": false,
+    "message": "Email already exists"
 }
 ```
 
@@ -72,35 +76,38 @@ Complete documentation for all API endpoints in the Eventify system.
 **Description:** Authenticate user and return JWT token
 
 **Request Body:**
+
 ```json
 {
-  "email": "john@example.com",
-  "password": "SecurePass123!"
+    "email": "john@example.com",
+    "password": "SecurePass123!"
 }
 ```
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Login successful",
-  "data": {
-    "user": {
-      "_id": "507f1f77bcf86cd799439011",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "role": "user"
-    },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
+    "success": true,
+    "message": "Login successful",
+    "data": {
+        "user": {
+            "_id": "507f1f77bcf86cd799439011",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "role": "user"
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
 }
 ```
 
 **Error Response (401):**
+
 ```json
 {
-  "success": false,
-  "message": "Invalid email or password"
+    "success": false,
+    "message": "Invalid email or password"
 }
 ```
 
@@ -116,55 +123,57 @@ Complete documentation for all API endpoints in the Eventify system.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `page` | Number | No | Page number (default: 1) |
-| `limit` | Number | No | Items per page (default: 10) |
-| `search` | String | No | Search in title/description |
-| `category` | String | No | Filter by category |
-| `location` | String | No | Filter by location |
-| `minPrice` | Number | No | Minimum price filter |
-| `maxPrice` | Number | No | Maximum price filter |
-| `startDate` | Date | No | Filter events from this date |
-| `endDate` | Date | No | Filter events until this date |
-| `sort` | String | No | Sort field (e.g., `date`, `price`, `title`) |
-| `order` | String | No | Sort order: `asc` or `desc` (default: `asc`) |
+| Parameter   | Type   | Required | Description                                  |
+| ----------- | ------ | -------- | -------------------------------------------- |
+| `page`      | Number | No       | Page number (default: 1)                     |
+| `limit`     | Number | No       | Items per page (default: 10)                 |
+| `search`    | String | No       | Search in title/description                  |
+| `category`  | String | No       | Filter by category                           |
+| `location`  | String | No       | Filter by location                           |
+| `minPrice`  | Number | No       | Minimum price filter                         |
+| `maxPrice`  | Number | No       | Maximum price filter                         |
+| `startDate` | Date   | No       | Filter events from this date                 |
+| `endDate`   | Date   | No       | Filter events until this date                |
+| `sort`      | String | No       | Sort field (e.g., `date`, `price`, `title`)  |
+| `order`     | String | No       | Sort order: `asc` or `desc` (default: `asc`) |
 
 **Example Request:**
+
 ```
 GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=desc
 ```
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Events retrieved successfully",
-  "data": {
-    "events": [
-      {
-        "_id": "507f1f77bcf86cd799439011",
-        "title": "Summer Music Festival",
-        "description": "Annual summer music event",
-        "date": "2026-07-15T18:00:00.000Z",
-        "location": "Central Park, NY",
-        "category": "concert",
-        "capacity": 1000,
-        "availableSeats": 750,
-        "price": 50,
-        "createdBy": {
-          "_id": "507f1f77bcf86cd799439012",
-          "name": "Admin User"
+    "success": true,
+    "message": "Events retrieved successfully",
+    "data": {
+        "events": [
+            {
+                "_id": "507f1f77bcf86cd799439011",
+                "title": "Summer Music Festival",
+                "description": "Annual summer music event",
+                "date": "2026-07-15T18:00:00.000Z",
+                "location": "Central Park, NY",
+                "category": "concert",
+                "capacity": 1000,
+                "availableSeats": 750,
+                "price": 50,
+                "createdBy": {
+                    "_id": "507f1f77bcf86cd799439012",
+                    "name": "Admin User"
+                }
+            }
+        ],
+        "pagination": {
+            "currentPage": 1,
+            "totalPages": 5,
+            "totalEvents": 50,
+            "limit": 10
         }
-      }
-    ],
-    "pagination": {
-      "currentPage": 1,
-      "totalPages": 5,
-      "totalEvents": 50,
-      "limit": 10
     }
-  }
 }
 ```
 
@@ -177,38 +186,41 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Description:** Get details of a specific event
 
 **Parameters:**
+
 - `id`: Event MongoDB ObjectId (required)
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Event retrieved successfully",
-  "data": {
-    "_id": "507f1f77bcf86cd799439011",
-    "title": "Summer Music Festival",
-    "description": "Annual summer music event featuring top artists",
-    "date": "2026-07-15T18:00:00.000Z",
-    "location": "Central Park, NY",
-    "category": "concert",
-    "capacity": 1000,
-    "availableSeats": 750,
-    "price": 50,
-    "createdBy": {
-      "_id": "507f1f77bcf86cd799439012",
-      "name": "Admin User"
-    },
-    "createdAt": "2026-04-01T10:00:00.000Z",
-    "updatedAt": "2026-04-05T15:30:00.000Z"
-  }
+    "success": true,
+    "message": "Event retrieved successfully",
+    "data": {
+        "_id": "507f1f77bcf86cd799439011",
+        "title": "Summer Music Festival",
+        "description": "Annual summer music event featuring top artists",
+        "date": "2026-07-15T18:00:00.000Z",
+        "location": "Central Park, NY",
+        "category": "concert",
+        "capacity": 1000,
+        "availableSeats": 750,
+        "price": 50,
+        "createdBy": {
+            "_id": "507f1f77bcf86cd799439012",
+            "name": "Admin User"
+        },
+        "createdAt": "2026-04-01T10:00:00.000Z",
+        "updatedAt": "2026-04-05T15:30:00.000Z"
+    }
 }
 ```
 
 **Error Response (404):**
+
 ```json
 {
-  "success": false,
-  "message": "Event not found"
+    "success": false,
+    "message": "Event not found"
 }
 ```
 
@@ -224,19 +236,22 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Authorization:** Admin only
 
 **Request Body:**
+
 ```json
 {
-  "title": "Tech Conference 2026",
-  "description": "Annual technology conference",
-  "date": "2026-09-20T09:00:00.000Z",
-  "location": "Convention Center, San Francisco",
-  "category": "conference",
-  "capacity": 500,
-  "price": 150
+    "title": "Tech Conference 2026",
+    "description": "Annual technology conference",
+    "date": "2026-09-20T09:00:00.000Z",
+    "location": "Convention Center, San Francisco",
+    "category": "conference",
+    "capacity": 500,
+    "price": 150,
+    "createdBy": "507f1f77bcf86cd799439012"
 }
 ```
 
 **Validation Rules:**
+
 - `title`: Required, 3-100 characters
 - `description`: Required, 10-1000 characters
 - `date`: Required, valid date, must be in the future
@@ -244,34 +259,37 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 - `category`: Required, one of: `concert`, `conference`, `workshop`, `seminar`, `sports`, `other`
 - `capacity`: Required, positive integer
 - `price`: Required, non-negative number
+- `createdBy`: Required, valid MongoDB ObjectId (admin user ID)
 
 **Success Response (201):**
+
 ```json
 {
-  "success": true,
-  "message": "Event created successfully",
-  "data": {
-    "_id": "507f1f77bcf86cd799439011",
-    "title": "Tech Conference 2026",
-    "description": "Annual technology conference",
-    "date": "2026-09-20T09:00:00.000Z",
-    "location": "Convention Center, San Francisco",
-    "category": "conference",
-    "capacity": 500,
-    "availableSeats": 500,
-    "price": 150,
-    "createdBy": "507f1f77bcf86cd799439012",
-    "createdAt": "2026-04-07T10:00:00.000Z",
-    "updatedAt": "2026-04-07T10:00:00.000Z"
-  }
+    "success": true,
+    "message": "Event created successfully",
+    "data": {
+        "_id": "507f1f77bcf86cd799439011",
+        "title": "Tech Conference 2026",
+        "description": "Annual technology conference",
+        "date": "2026-09-20T09:00:00.000Z",
+        "location": "Convention Center, San Francisco",
+        "category": "conference",
+        "capacity": 500,
+        "availableSeats": 500,
+        "price": 150,
+        "createdBy": "507f1f77bcf86cd799439012",
+        "createdAt": "2026-04-07T10:00:00.000Z",
+        "updatedAt": "2026-04-07T10:00:00.000Z"
+    }
 }
 ```
 
 **Error Response (403):**
+
 ```json
 {
-  "success": false,
-  "message": "Not authorized to access this route"
+    "success": false,
+    "message": "Not authorized to access this route"
 }
 ```
 
@@ -287,33 +305,35 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Authorization:** Admin only
 
 **Request Body:** (All fields optional)
+
 ```json
 {
-  "title": "Updated Tech Conference 2026",
-  "description": "Updated description",
-  "capacity": 600
+    "title": "Updated Tech Conference 2026",
+    "description": "Updated description",
+    "capacity": 600
 }
 ```
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Event updated successfully",
-  "data": {
-    "_id": "507f1f77bcf86cd799439011",
-    "title": "Updated Tech Conference 2026",
-    "description": "Updated description",
-    "date": "2026-09-20T09:00:00.000Z",
-    "location": "Convention Center, San Francisco",
-    "category": "conference",
-    "capacity": 600,
-    "availableSeats": 600,
-    "price": 150,
-    "createdBy": "507f1f77bcf86cd799439012",
-    "createdAt": "2026-04-07T10:00:00.000Z",
-    "updatedAt": "2026-04-07T12:00:00.000Z"
-  }
+    "success": true,
+    "message": "Event updated successfully",
+    "data": {
+        "_id": "507f1f77bcf86cd799439011",
+        "title": "Updated Tech Conference 2026",
+        "description": "Updated description",
+        "date": "2026-09-20T09:00:00.000Z",
+        "location": "Convention Center, San Francisco",
+        "category": "conference",
+        "capacity": 600,
+        "availableSeats": 600,
+        "price": 150,
+        "createdBy": "507f1f77bcf86cd799439012",
+        "createdAt": "2026-04-07T10:00:00.000Z",
+        "updatedAt": "2026-04-07T12:00:00.000Z"
+    }
 }
 ```
 
@@ -329,18 +349,20 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Authorization:** Admin only
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Event deleted successfully"
+    "success": true,
+    "message": "Event deleted successfully"
 }
 ```
 
 **Error Response (404):**
+
 ```json
 {
-  "success": false,
-  "message": "Event not found"
+    "success": false,
+    "message": "Event not found"
 }
 ```
 
@@ -358,40 +380,41 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `page` | Number | No | Page number (default: 1) |
-| `limit` | Number | No | Items per page (default: 10) |
-| `status` | String | No | Filter by status: `confirmed`, `pending`, `cancelled` |
+| Parameter | Type   | Required | Description                                           |
+| --------- | ------ | -------- | ----------------------------------------------------- |
+| `page`    | Number | No       | Page number (default: 1)                              |
+| `limit`   | Number | No       | Items per page (default: 10)                          |
+| `status`  | String | No       | Filter by status: `confirmed`, `pending`, `cancelled` |
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Bookings retrieved successfully",
-  "data": {
-    "bookings": [
-      {
-        "_id": "507f1f77bcf86cd799439020",
-        "event": {
-          "_id": "507f1f77bcf86cd799439011",
-          "title": "Summer Music Festival",
-          "date": "2026-07-15T18:00:00.000Z",
-          "location": "Central Park, NY"
-        },
-        "quantity": 2,
-        "totalPrice": 100,
-        "status": "confirmed",
-        "createdAt": "2026-04-07T10:00:00.000Z"
-      }
-    ],
-    "pagination": {
-      "currentPage": 1,
-      "totalPages": 1,
-      "totalBookings": 1,
-      "limit": 10
+    "success": true,
+    "message": "Bookings retrieved successfully",
+    "data": {
+        "bookings": [
+            {
+                "_id": "507f1f77bcf86cd799439020",
+                "event": {
+                    "_id": "507f1f77bcf86cd799439011",
+                    "title": "Summer Music Festival",
+                    "date": "2026-07-15T18:00:00.000Z",
+                    "location": "Central Park, NY"
+                },
+                "quantity": 2,
+                "totalPrice": 100,
+                "status": "confirmed",
+                "createdAt": "2026-04-07T10:00:00.000Z"
+            }
+        ],
+        "pagination": {
+            "currentPage": 1,
+            "totalPages": 1,
+            "totalBookings": 1,
+            "limit": 10
+        }
     }
-  }
 }
 ```
 
@@ -406,30 +429,31 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Authentication:** Required (Bearer Token)
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Booking retrieved successfully",
-  "data": {
-    "_id": "507f1f77bcf86cd799439020",
-    "user": {
-      "_id": "507f1f77bcf86cd799439012",
-      "name": "John Doe",
-      "email": "john@example.com"
-    },
-    "event": {
-      "_id": "507f1f77bcf86cd799439011",
-      "title": "Summer Music Festival",
-      "date": "2026-07-15T18:00:00.000Z",
-      "location": "Central Park, NY",
-      "price": 50
-    },
-    "quantity": 2,
-    "totalPrice": 100,
-    "status": "confirmed",
-    "createdAt": "2026-04-07T10:00:00.000Z",
-    "updatedAt": "2026-04-07T10:00:00.000Z"
-  }
+    "success": true,
+    "message": "Booking retrieved successfully",
+    "data": {
+        "_id": "507f1f77bcf86cd799439020",
+        "user": {
+            "_id": "507f1f77bcf86cd799439012",
+            "name": "John Doe",
+            "email": "john@example.com"
+        },
+        "event": {
+            "_id": "507f1f77bcf86cd799439011",
+            "title": "Summer Music Festival",
+            "date": "2026-07-15T18:00:00.000Z",
+            "location": "Central Park, NY",
+            "price": 50
+        },
+        "quantity": 2,
+        "totalPrice": 100,
+        "status": "confirmed",
+        "createdAt": "2026-04-07T10:00:00.000Z",
+        "updatedAt": "2026-04-07T10:00:00.000Z"
+    }
 }
 ```
 
@@ -444,18 +468,21 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Authentication:** Required (Bearer Token)
 
 **Request Body:**
+
 ```json
 {
-  "eventId": "507f1f77bcf86cd799439011",
-  "quantity": 2
+    "eventId": "507f1f77bcf86cd799439011",
+    "quantity": 2
 }
 ```
 
 **Validation Rules:**
+
 - `eventId`: Required, valid MongoDB ObjectId
 - `quantity`: Required, positive integer, must not exceed available seats
 
 **Business Logic:**
+
 1. Check if event exists
 2. Check if event has available seats
 3. Calculate total price (quantity × event price)
@@ -464,36 +491,39 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 6. Log the booking
 
 **Success Response (201):**
+
 ```json
 {
-  "success": true,
-  "message": "Booking created successfully",
-  "data": {
-    "_id": "507f1f77bcf86cd799439020",
-    "user": "507f1f77bcf86cd799439012",
-    "event": "507f1f77bcf86cd799439011",
-    "quantity": 2,
-    "totalPrice": 100,
-    "status": "confirmed",
-    "createdAt": "2026-04-07T10:00:00.000Z",
-    "updatedAt": "2026-04-07T10:00:00.000Z"
-  }
+    "success": true,
+    "message": "Booking created successfully",
+    "data": {
+        "_id": "507f1f77bcf86cd799439020",
+        "user": "507f1f77bcf86cd799439012",
+        "event": "507f1f77bcf86cd799439011",
+        "quantity": 2,
+        "totalPrice": 100,
+        "status": "confirmed",
+        "createdAt": "2026-04-07T10:00:00.000Z",
+        "updatedAt": "2026-04-07T10:00:00.000Z"
+    }
 }
 ```
 
 **Error Response (400):**
+
 ```json
 {
-  "success": false,
-  "message": "Not enough available seats"
+    "success": false,
+    "message": "Not enough available seats"
 }
 ```
 
 **Error Response (404):**
+
 ```json
 {
-  "success": false,
-  "message": "Event not found"
+    "success": false,
+    "message": "Event not found"
 }
 ```
 
@@ -509,29 +539,31 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Authorization:** Admin only
 
 **Request Body:**
+
 ```json
 {
-  "status": "cancelled"
+    "status": "cancelled"
 }
 ```
 
 **Valid Statuses:** `confirmed`, `pending`, `cancelled`
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Booking status updated successfully",
-  "data": {
-    "_id": "507f1f77bcf86cd799439020",
-    "user": "507f1f77bcf86cd799439012",
-    "event": "507f1f77bcf86cd799439011",
-    "quantity": 2,
-    "totalPrice": 100,
-    "status": "cancelled",
-    "createdAt": "2026-04-07T10:00:00.000Z",
-    "updatedAt": "2026-04-07T14:00:00.000Z"
-  }
+    "success": true,
+    "message": "Booking status updated successfully",
+    "data": {
+        "_id": "507f1f77bcf86cd799439020",
+        "user": "507f1f77bcf86cd799439012",
+        "event": "507f1f77bcf86cd799439011",
+        "quantity": 2,
+        "totalPrice": 100,
+        "status": "cancelled",
+        "createdAt": "2026-04-07T10:00:00.000Z",
+        "updatedAt": "2026-04-07T14:00:00.000Z"
+    }
 }
 ```
 
@@ -546,16 +578,18 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 **Authentication:** Required (Bearer Token)
 
 **Business Logic:**
+
 1. Verify booking exists
 2. Check if user owns booking or is admin
 3. Update booking status to "cancelled"
 4. Restore event availableSeats
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Booking cancelled successfully"
+    "success": true,
+    "message": "Booking cancelled successfully"
 }
 ```
 
@@ -574,46 +608,47 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `page` | Number | No | Page number (default: 1) |
-| `limit` | Number | No | Items per page (default: 10) |
-| `status` | String | No | Filter by status |
-| `eventId` | String | No | Filter by event ID |
-| `userId` | String | No | Filter by user ID |
+| Parameter | Type   | Required | Description                  |
+| --------- | ------ | -------- | ---------------------------- |
+| `page`    | Number | No       | Page number (default: 1)     |
+| `limit`   | Number | No       | Items per page (default: 10) |
+| `status`  | String | No       | Filter by status             |
+| `eventId` | String | No       | Filter by event ID           |
+| `userId`  | String | No       | Filter by user ID            |
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "All bookings retrieved successfully",
-  "data": {
-    "bookings": [
-      {
-        "_id": "507f1f77bcf86cd799439020",
-        "user": {
-          "_id": "507f1f77bcf86cd799439012",
-          "name": "John Doe",
-          "email": "john@example.com"
-        },
-        "event": {
-          "_id": "507f1f77bcf86cd799439011",
-          "title": "Summer Music Festival",
-          "date": "2026-07-15T18:00:00.000Z"
-        },
-        "quantity": 2,
-        "totalPrice": 100,
-        "status": "confirmed",
-        "createdAt": "2026-04-07T10:00:00.000Z"
-      }
-    ],
-    "pagination": {
-      "currentPage": 1,
-      "totalPages": 10,
-      "totalBookings": 100,
-      "limit": 10
+    "success": true,
+    "message": "All bookings retrieved successfully",
+    "data": {
+        "bookings": [
+            {
+                "_id": "507f1f77bcf86cd799439020",
+                "user": {
+                    "_id": "507f1f77bcf86cd799439012",
+                    "name": "John Doe",
+                    "email": "john@example.com"
+                },
+                "event": {
+                    "_id": "507f1f77bcf86cd799439011",
+                    "title": "Summer Music Festival",
+                    "date": "2026-07-15T18:00:00.000Z"
+                },
+                "quantity": 2,
+                "totalPrice": 100,
+                "status": "confirmed",
+                "createdAt": "2026-04-07T10:00:00.000Z"
+            }
+        ],
+        "pagination": {
+            "currentPage": 1,
+            "totalPages": 10,
+            "totalBookings": 100,
+            "limit": 10
+        }
     }
-  }
 }
 ```
 
@@ -630,34 +665,35 @@ GET /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=de
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `page` | Number | No | Page number (default: 1) |
-| `limit` | Number | No | Items per page (default: 10) |
-| `role` | String | No | Filter by role: `user`, `admin` |
+| Parameter | Type   | Required | Description                     |
+| --------- | ------ | -------- | ------------------------------- |
+| `page`    | Number | No       | Page number (default: 1)        |
+| `limit`   | Number | No       | Items per page (default: 10)    |
+| `role`    | String | No       | Filter by role: `user`, `admin` |
 
 **Success Response (200):**
+
 ```json
 {
-  "success": true,
-  "message": "Users retrieved successfully",
-  "data": {
-    "users": [
-      {
-        "_id": "507f1f77bcf86cd799439012",
-        "name": "John Doe",
-        "email": "john@example.com",
-        "role": "user",
-        "createdAt": "2026-04-01T10:00:00.000Z"
-      }
-    ],
-    "pagination": {
-      "currentPage": 1,
-      "totalPages": 2,
-      "totalUsers": 15,
-      "limit": 10
+    "success": true,
+    "message": "Users retrieved successfully",
+    "data": {
+        "users": [
+            {
+                "_id": "507f1f77bcf86cd799439012",
+                "name": "John Doe",
+                "email": "john@example.com",
+                "role": "user",
+                "createdAt": "2026-04-01T10:00:00.000Z"
+            }
+        ],
+        "pagination": {
+            "currentPage": 1,
+            "totalPages": 2,
+            "totalUsers": 15,
+            "limit": 10
+        }
     }
-  }
 }
 ```
 
@@ -674,6 +710,7 @@ GET /api/events?page=2&limit=20
 ```
 
 **Default Values:**
+
 - `page`: 1
 - `limit`: 10
 - Maximum `limit`: 100
@@ -689,6 +726,7 @@ GET /api/events?search=music festival
 ```
 
 **Searchable Fields (Events):**
+
 - `title`
 - `description`
 
@@ -705,6 +743,7 @@ GET /api/events?category=concert&location=New York&minPrice=20&maxPrice=100
 **Available Filters by Resource:**
 
 **Events:**
+
 - `category`: Exact match
 - `location`: Partial match
 - `minPrice`, `maxPrice`: Price range
@@ -712,6 +751,7 @@ GET /api/events?category=concert&location=New York&minPrice=20&maxPrice=100
 - `createdBy`: User ID
 
 **Bookings:**
+
 - `status`: Exact match (confirmed, pending, cancelled)
 - `eventId`: Event ID
 - `userId`: User ID
@@ -730,12 +770,14 @@ GET /api/events?sort=price,-date  (multiple fields)
 **Sortable Fields:**
 
 **Events:**
+
 - `title`
 - `date`
 - `price`
 - `createdAt`
 
 **Bookings:**
+
 - `totalPrice`
 - `status`
 - `createdAt`
@@ -748,9 +790,9 @@ GET /api/events?sort=price,-date  (multiple fields)
 
 ```json
 {
-  "success": true,
-  "message": "Descriptive success message",
-  "data": { }
+    "success": true,
+    "message": "Descriptive success message",
+    "data": {}
 }
 ```
 
@@ -758,9 +800,9 @@ GET /api/events?sort=price,-date  (multiple fields)
 
 ```json
 {
-  "success": false,
-  "message": "Descriptive error message",
-  "errors": [ ]
+    "success": false,
+    "message": "Descriptive error message",
+    "errors": []
 }
 ```
 
@@ -768,12 +810,12 @@ GET /api/events?sort=price,-date  (multiple fields)
 
 ```json
 {
-  "pagination": {
-    "currentPage": 1,
-    "totalPages": 5,
-    "totalItems": 50,
-    "limit": 10
-  }
+    "pagination": {
+        "currentPage": 1,
+        "totalPages": 5,
+        "totalItems": 50,
+        "limit": 10
+    }
 }
 ```
 
@@ -781,17 +823,17 @@ GET /api/events?sort=price,-date  (multiple fields)
 
 ## ⚠️ Error Codes
 
-| HTTP Status | Meaning | Example |
-|-------------|---------|---------|
-| 200 | OK | Successful GET, PUT, PATCH, DELETE |
-| 201 | Created | Successful POST (resource created) |
-| 400 | Bad Request | Validation error, invalid input |
-| 401 | Unauthorized | Missing or invalid JWT token |
-| 403 | Forbidden | Insufficient permissions |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Duplicate resource (e.g., email exists) |
-| 429 | Too Many Requests | Rate limit exceeded |
-| 500 | Internal Server Error | Server-side error |
+| HTTP Status | Meaning               | Example                                 |
+| ----------- | --------------------- | --------------------------------------- |
+| 200         | OK                    | Successful GET, PUT, PATCH, DELETE      |
+| 201         | Created               | Successful POST (resource created)      |
+| 400         | Bad Request           | Validation error, invalid input         |
+| 401         | Unauthorized          | Missing or invalid JWT token            |
+| 403         | Forbidden             | Insufficient permissions                |
+| 404         | Not Found             | Resource doesn't exist                  |
+| 409         | Conflict              | Duplicate resource (e.g., email exists) |
+| 429         | Too Many Requests     | Rate limit exceeded                     |
+| 500         | Internal Server Error | Server-side error                       |
 
 ---
 
@@ -800,11 +842,13 @@ GET /api/events?sort=price,-date  (multiple fields)
 All protected endpoints require JWT authentication:
 
 **Header Format:**
+
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 **How to Get Token:**
+
 1. Register or login via `/api/auth/register` or `/api/auth/login`
 2. Receive token in response
 3. Include token in subsequent requests
@@ -813,16 +857,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ## 🎯 Role-Based Access
 
-| Endpoint | User | Admin |
-|----------|------|-------|
-| GET /api/events | ✅ | ✅ |
-| POST /api/events | ❌ | ✅ |
-| PUT /api/events/:id | ❌ | ✅ |
-| DELETE /api/events/:id | ❌ | ✅ |
-| GET /api/bookings | ✅ (own only) | ✅ (all) |
-| POST /api/bookings | ✅ | ✅ |
+| Endpoint                 | User          | Admin    |
+| ------------------------ | ------------- | -------- |
+| GET /api/events          | ✅            | ✅       |
+| POST /api/events         | ❌            | ✅       |
+| PUT /api/events/:id      | ❌            | ✅       |
+| DELETE /api/events/:id   | ❌            | ✅       |
+| GET /api/bookings        | ✅ (own only) | ✅ (all) |
+| POST /api/bookings       | ✅            | ✅       |
 | DELETE /api/bookings/:id | ✅ (own only) | ✅ (any) |
-| GET /api/admin/* | ❌ | ✅ |
+| GET /api/admin/\*        | ❌            | ✅       |
 
 ---
 
@@ -835,4 +879,4 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ---
 
-*Last Updated: April 2026*
+_Last Updated: April 2026_
