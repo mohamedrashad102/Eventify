@@ -1,0 +1,24 @@
+variables:
+  - name: baseUrl
+    value: http://localhost:3000
+  - name: apiVersion
+    value: v1
+  - name: timeout
+    value: "30000"
+  - name: adminEmail
+    value: admin@example.com
+  - name: adminPassword
+    value: ""
+    secret: true
+  - name: userEmail
+    value: user@example.com
+  - name: userPassword
+    value: ""
+    secret: true
+  - name: authToken
+    value: ""
+    secret: true
+  - name: userId
+    value: ""
+  - name: eventId
+    value: ""
