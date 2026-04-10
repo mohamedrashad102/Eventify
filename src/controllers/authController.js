@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import { generateToken } from "../utils/jwtUtils.js";
-import AppError from "../utils/AppError.js";
+import AppError from "../middlewares/AppError.js";
 
 export const register = async (req, res) => {
     const { email, password, name } = req.body;
