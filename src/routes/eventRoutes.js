@@ -9,6 +9,7 @@ import {
 import validateRequestBody from "../middlewares/validateRequestBody.js";
 import validateFields_createEvent from "../middlewares/events/validateFields_createEvent.js";
 import validateFields_updateEvent from "../middlewares/events/validateFields_updateEvent.js";
+import { authorize, protect } from "../middlewares/authMiddleware.js";
 
 
 const router = Router();
@@ -23,20 +24,29 @@ router.get("/:id", getEvent);
 
 
 // ======= Create new event (admin only) =======
-router.post("/", validateRequestBody, validateFields_createEvent, createEvent); // before validate => isAuthenticated, isAuthorized('admin')
+router.post(
+    "/",
+    protect,
+    authorize(["admin"]),
+    validateRequestBody,
+    validateFields_createEvent,
+    createEvent,
+);
 
 
 // ======= Update event (admin only) =======
 router.put(
     "/:id",
+    protect,
+    authorize(["admin"]),
     validateRequestBody,
     validateFields_updateEvent,
     updateEvent,
-); // before validate => isAuthenticated, isAuthorized('admin')
+);
 
 
 // ======= Delete event (admin only) =======
-router.delete("/:id", deleteEvent); // isAuthenticated, isAuthorized('admin')
+router.delete("/:id", protect, authorize(["admin"]), deleteEvent);
 
 
 export default router;
