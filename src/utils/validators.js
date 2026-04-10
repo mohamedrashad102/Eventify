@@ -1,5 +1,5 @@
 import { body, param, query, validationResult } from 'express-validator';
-import AppError from './AppError.js';
+import AppError from '../middlewares/AppError.js';
 
 /**
  * Validator utilities
