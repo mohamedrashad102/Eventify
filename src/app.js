@@ -1,6 +1,8 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import { logger } from './middlewares/loggerMiddleware.js';
 import { apiLimiter } from './middlewares/rateLimiter.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware.js';
@@ -8,6 +10,40 @@ import authRoutes from './routes/authRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 
 const app = express();
+
+// Swagger configuration
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Eventify API Documentation',
+            version: '1.0.0',
+            description: 'API documentation for Eventify - Event Management System',
+            contact: {
+                name: 'Eventify Team'
+            }
+        },
+        servers: [
+            {
+                url: 'http://localhost:3000',
+                description: 'Development server'
+            }
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    description: 'JWT token obtained from /api/auth/login endpoint. Format: "Bearer <token>"'
+                }
+            }
+        }
+    },
+    apis: ['./src/docs/swagger/**/*.yaml']
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Middleware
 app.use(express.json());
@@ -27,11 +63,15 @@ app.use(logger);
 // Rate limiting
 app.use('/api', apiLimiter);
 
+// Swagger documentation route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Basic route
 app.get('/', (req, res) => {
     res.json({
         message: 'Eventify API is running!',
-        version: '1.0.0'
+        version: '1.0.0',
+        docs: '/api-docs'
     });
 });
 
