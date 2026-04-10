@@ -1,83 +1,66 @@
 import mongoose from "mongoose";
+import AppError from "../AppError.js";
 
 const validateFields_createEvent = (req, res, next) => {
     const data = req.body;
 
     // Validate title
     if (!data.title) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Title is required" });
+        throw new AppError("Title is required", 400);
     }
     if (
         typeof data.title !== "string" ||
         data.title.trim().length < 3 ||
         data.title.length > 100
     ) {
-        return res.status(400).json({
-            success: false,
-            message: "Title must be between 3 and 100 characters",
-        });
+        throw new AppError("Title must be between 3 and 100 characters", 400);
     }
 
     // Validate description
     if (!data.description) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Description is required" });
+        throw new AppError("Description is required", 400);
     }
     if (
         typeof data.description !== "string" ||
         data.description.trim().length < 10 ||
         data.description.length > 1000
     ) {
-        return res.status(400).json({
-            success: false,
-            message: "Description must be between 10 and 1000 characters",
-        });
+        throw new AppError(
+            "Description must be between 10 and 1000 characters",
+            400,
+        );
     }
 
     // Validate date
     if (!data.date) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Date is required" });
+        throw new AppError("Date is required", 400);
     }
     const eventDate = new Date(data.date);
     if (isNaN(eventDate.getTime())) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Date must be a valid date" });
+        throw new AppError("Date must be a valid date", 400);
     }
     if (eventDate <= new Date()) {
-        return res.status(400).json({
-            success: false,
-            message: "Date must be in the future",
-        });
+        throw new AppError("Date must be in the future", 400);
     }
 
     // Validate location
     if (!data.location) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Location is required" });
+        throw new AppError("Location is required", 400);
     }
     if (
         typeof data.location !== "string" ||
         data.location.trim().length < 3 ||
         data.location.length > 200
     ) {
-        return res.status(400).json({
-            success: false,
-            message: "Location must be between 3 and 200 characters",
-        });
+        throw new AppError(
+            "Location must be between 3 and 200 characters",
+            400,
+        );
     }
 
     // Validate category
     if (!data.category) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Category is required" });
+        throw new AppError("Category is required", 400);
     }
     const validCategories = [
         "concert",
@@ -88,52 +71,37 @@ const validateFields_createEvent = (req, res, next) => {
         "other",
     ];
     if (!validCategories.includes(data.category)) {
-        return res.status(400).json({
-            success: false,
-            message:
-                "Category must be one of: concert, conference, workshop, seminar, sports, other",
-        });
+        throw new AppError(
+            "Category must be one of: concert, conference, workshop, seminar, sports, other",
+            400,
+        );
     }
 
     // Validate capacity
     if (data.capacity === undefined || data.capacity === null) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Capacity is required" });
+        throw new AppError("Capacity is required", 400);
     }
     const capacityNum = Number(data.capacity);
     if (!Number.isInteger(capacityNum) || capacityNum <= 0) {
-        return res.status(400).json({
-            success: false,
-            message: "Capacity must be a positive integer",
-        });
+        throw new AppError("Capacity must be a positive integer", 400);
     }
 
     // Validate price
     if (data.price === undefined || data.price === null) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Price is required" });
+        throw new AppError("Price is required", 400);
     }
     const priceNum = Number(data.price);
     if (isNaN(priceNum) || priceNum < 0) {
-        return res.status(400).json({
-            success: false,
-            message: "Price must be a non-negative number",
-        });
+        throw new AppError("Price must be a non-negative number", 400);
     }
 
     // Ensure createdBy exists and is a valid ObjectId
-    const creatorId = req.user?._id || req.user?.id || req.body.createdBy;       // based on how auth middleware sets user info
+    const creatorId = req.user?.id || req.body.createdBy;
     if (!creatorId) {
-        return res
-            .status(400)
-            .json({ success: false, message: "The event creator is required" });
+        throw new AppError("The event creator is required", 400);
     }
     if (!mongoose.Types.ObjectId.isValid(creatorId)) {
-        return res
-            .status(400)
-            .json({ success: false, message: "The event creator is not a valid ObjectId" });
+        throw new AppError("The event creator must be a valid user ID", 400);
     }
 
     next();

@@ -1,3 +1,5 @@
+import AppError from "../AppError.js";
+
 const validateFields_updateEvent = (req, res, next) => {
     const data = req.body;
 
@@ -16,11 +18,10 @@ const validateFields_updateEvent = (req, res, next) => {
     );
 
     if (!hasAtLeastOneField) {
-        return res.status(400).json({
-            success: false,
-            message:
-                "At least one field is required: title, description, date, location, category, capacity, or price",
-        });
+        throw new AppError(
+            "At least one field (title, description, date, location, category, capacity, price) must be provided for update",
+            400,
+        );
     }
 
     // Validate title
@@ -30,10 +31,7 @@ const validateFields_updateEvent = (req, res, next) => {
             data.title.trim().length < 3 ||
             data.title.length > 100)
     ) {
-        return res.status(400).json({
-            success: false,
-            message: "Title must be between 3 and 100 characters",
-        });
+        throw new AppError("Title must be between 3 and 100 characters", 400);
     }
 
     // Validate description
@@ -43,25 +41,20 @@ const validateFields_updateEvent = (req, res, next) => {
             data.description.trim().length < 10 ||
             data.description.length > 1000)
     ) {
-        return res.status(400).json({
-            success: false,
-            message: "Description must be between 10 and 1000 characters",
-        });
+        throw new AppError(
+            "Description must be between 10 and 1000 characters",
+            400,
+        );
     }
 
     // Validate date
     if (data.hasOwnProperty("date")) {
         const eventDate = new Date(data.date);
         if (isNaN(eventDate.getTime())) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Date must be a valid date" });
+            throw new AppError("Date must be a valid date", 400);
         }
         if (eventDate <= new Date()) {
-            return res.status(400).json({
-                success: false,
-                message: "Date must be in the future",
-            });
+            throw new AppError("Date must be in the future", 400);
         }
     }
 
@@ -72,10 +65,10 @@ const validateFields_updateEvent = (req, res, next) => {
             data.location.trim().length < 3 ||
             data.location.length > 200)
     ) {
-        return res.status(400).json({
-            success: false,
-            message: "Location must be between 3 and 200 characters",
-        });
+        throw new AppError(
+            "Location must be between 3 and 200 characters",
+            400,
+        );
     }
 
     // Validate category
@@ -91,21 +84,17 @@ const validateFields_updateEvent = (req, res, next) => {
         data.hasOwnProperty("category") &&
         !validCategories.includes(data.category)
     ) {
-        return res.status(400).json({
-            success: false,
-            message:
-                "Category must be one of: concert, conference, workshop, seminar, sports, other",
-        });
+        throw new AppError(
+            "Category must be one of: concert, conference, workshop, seminar, sports, other",
+            400,
+        );
     }
 
     // Validate capacity
     if (data.hasOwnProperty("capacity")) {
         const capacityNum = Number(data.capacity);
         if (!Number.isInteger(capacityNum) || capacityNum <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: "Capacity must be a positive integer",
-            });
+            throw new AppError("Capacity must be a positive integer", 400);
         }
     }
 
@@ -113,10 +102,7 @@ const validateFields_updateEvent = (req, res, next) => {
     if (data.hasOwnProperty("price")) {
         const priceNum = Number(data.price);
         if (isNaN(priceNum) || priceNum < 0) {
-            return res.status(400).json({
-                success: false,
-                message: "Price must be a non-negative number",
-            });
+            throw new AppError("Price must be a non-negative number", 400);
         }
     }
 
