@@ -6,9 +6,10 @@ import {
     updateEvent,
     deleteEvent,
 } from "../controllers/eventController.js";
-import validateRequestBody from "../middlewares/validateRequestBody.js";
-import validateFields_createEvent from "../middlewares/events/validateFields_createEvent.js";
-import validateFields_updateEvent from "../middlewares/events/validateFields_updateEvent.js";
+import {
+    validateCreateEvent,
+    validateUpdateEvent,
+} from "../utils/validators.js";
 import { authorize, protect } from "../middlewares/authMiddleware.js";
 
 
@@ -28,8 +29,7 @@ router.post(
     "/",
     protect,
     authorize(["admin"]),
-    validateRequestBody,
-    validateFields_createEvent,
+    validateCreateEvent,
     createEvent,
 );
 
@@ -39,8 +39,7 @@ router.put(
     "/:id",
     protect,
     authorize(["admin"]),
-    validateRequestBody,
-    validateFields_updateEvent,
+    validateUpdateEvent,
     updateEvent,
 );
 

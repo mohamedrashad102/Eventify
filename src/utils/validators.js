@@ -61,20 +61,37 @@ const validateLogin = [
 /**
  * Validate event creation/update
  */
-const validateEvent = [
+const eventCategories = ['concert', 'conference', 'workshop', 'seminar', 'sports', 'other'];
+
+const ensureEventBody = (req, res, next) => {
+  const { body: requestBody } = req;
+
+  if (!requestBody || typeof requestBody !== 'object' || Array.isArray(requestBody) || Object.keys(requestBody).length === 0) {
+    throw AppError.badRequest('Request body is required');
+  }
+
+  next();
+};
+
+const validateCreateEvent = [
+  ensureEventBody,
   body('title')
     .trim()
     .notEmpty().withMessage('Title is required')
+    .bail()
     .isLength({ min: 3, max: 100 }).withMessage('Title must be between 3 and 100 characters'),
   
   body('description')
     .trim()
     .notEmpty().withMessage('Description is required')
+    .bail()
     .isLength({ min: 10, max: 1000 }).withMessage('Description must be between 10 and 1000 characters'),
   
   body('date')
     .notEmpty().withMessage('Date is required')
+    .bail()
     .isISO8601().withMessage('Please provide a valid date')
+    .bail()
     .custom((value) => {
       if (new Date(value) <= new Date()) {
         throw new Error('Event date must be in the future');
@@ -85,25 +102,85 @@ const validateEvent = [
   body('location')
     .trim()
     .notEmpty().withMessage('Location is required')
+    .bail()
     .isLength({ min: 3, max: 200 }).withMessage('Location must be between 3 and 200 characters'),
   
   body('category')
     .trim()
     .notEmpty().withMessage('Category is required')
-    .isIn(['concert', 'conference', 'workshop', 'seminar', 'sports', 'other'])
+    .bail()
+    .isIn(eventCategories)
     .withMessage('Category must be one of: concert, conference, workshop, seminar, sports, other'),
   
   body('capacity')
     .notEmpty().withMessage('Capacity is required')
+    .bail()
     .isInt({ min: 1 }).withMessage('Capacity must be a positive integer'),
   
   body('price')
     .notEmpty().withMessage('Price is required')
+    .bail()
     .isFloat({ min: 0 }).withMessage('Price must be a non-negative number'),
   
   handleValidationErrors
 ];
 
+  const validateUpdateEvent = [
+    ensureEventBody,
+    (req, res, next) => {
+      const updatableFields = ['title', 'description', 'date', 'location', 'category', 'capacity', 'price'];
+      const hasAtLeastOneField = updatableFields.some((field) =>
+        Object.prototype.hasOwnProperty.call(req.body, field),
+      );
+
+      if (!hasAtLeastOneField) {
+        throw AppError.badRequest('At least one field (title, description, date, location, category, capacity, price) must be provided for update');
+      }
+
+      next();
+    },
+    body('title')
+      .optional()
+      .trim()
+      .isLength({ min: 3, max: 100 }).withMessage('Title must be between 3 and 100 characters'),
+
+    body('description')
+      .optional()
+      .trim()
+      .isLength({ min: 10, max: 1000 }).withMessage('Description must be between 10 and 1000 characters'),
+
+    body('date')
+      .optional()
+      .isISO8601().withMessage('Please provide a valid date')
+      .bail()
+      .custom((value) => {
+        if (new Date(value) <= new Date()) {
+          throw new Error('Event date must be in the future');
+        }
+        return true;
+      }),
+
+    body('location')
+      .optional()
+      .trim()
+      .isLength({ min: 3, max: 200 }).withMessage('Location must be between 3 and 200 characters'),
+
+    body('category')
+      .optional()
+      .trim()
+      .isIn(eventCategories)
+      .withMessage('Category must be one of: concert, conference, workshop, seminar, sports, other'),
+
+    body('capacity')
+      .optional()
+      .isInt({ min: 1 }).withMessage('Capacity must be a positive integer'),
+
+    body('price')
+      .optional()
+      .isFloat({ min: 0 }).withMessage('Price must be a non-negative number'),
+
+    handleValidationErrors
+  ];
 /**
  * Validate booking creation
  */
@@ -176,7 +253,8 @@ const isValidEmail = (email) => {
 export {
   validateRegistration,
   validateLogin,
-  validateEvent,
+  validateCreateEvent,
+  validateUpdateEvent,
   validateBooking,
   validateObjectId,
   validateQuery,
