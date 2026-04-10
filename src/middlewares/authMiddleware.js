@@ -1,5 +1,5 @@
-import AppError from './AppError.js';
-import { verifyToken } from '../utils/jwtUtils.js';
+import { verifyToken } from "../utils/jwtUtils.js";
+import AppError from "./AppError.js";
 
 /**
  * Authentication middleware - Protects routes
@@ -10,13 +10,18 @@ const protect = async (req, res, next) => {
     let token;
 
     // Check for token in Authorization header
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
     // Check if token exists
     if (!token) {
-      throw AppError.unauthorized('Not authorized to access this route. Token missing.');
+      throw AppError.unauthorized(
+        "Not authorized to access this route. Token missing.",
+      );
     }
 
     // Verify token
@@ -25,7 +30,7 @@ const protect = async (req, res, next) => {
     // Attach user info to request
     req.user = {
       id: decoded.id,
-      role: decoded.role
+      role: decoded.role,
     };
 
     next();
@@ -44,12 +49,15 @@ const authorize = (...roles) => {
     try {
       // Check if user exists (should be set by protect middleware)
       if (!req.user) {
-        throw AppError.unauthorized('Authentication required');
+        throw AppError.unauthorized("Authentication required");
       }
 
+      // Flatten roles array (handles both authorize('admin') and authorize(['admin']))
+      const allowedRoles = roles.flat();
+
       // Check if user role is in allowed roles
-      if (!roles.includes(req.user.role)) {
-        throw AppError.forbidden('Not authorized to access this route');
+      if (!allowedRoles.includes(req.user.role)) {
+        throw AppError.forbidden("Not authorized to access this route");
       }
 
       next();
@@ -67,15 +75,18 @@ const optionalAuth = async (req, res, next) => {
   try {
     let token;
 
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
     if (token) {
       const decoded = verifyToken(token);
       req.user = {
         id: decoded.id,
-        role: decoded.role
+        role: decoded.role,
       };
     }
 
@@ -86,4 +97,4 @@ const optionalAuth = async (req, res, next) => {
   }
 };
 
-export { protect, authorize, optionalAuth };
+export { authorize, optionalAuth, protect };
