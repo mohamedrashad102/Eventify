@@ -4,6 +4,7 @@ import cors from 'cors';
 import { logger } from './middlewares/loggerMiddleware.js';
 import { apiLimiter } from './middlewares/rateLimiter.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
@@ -30,7 +31,7 @@ app.get('/', (req, res) => {
 });
 
 // API Routes (to be added by other team members)
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 // app.use('/api/events', eventRoutes);
 // app.use('/api/bookings', bookingRoutes);
 // app.use('/api/admin', adminRoutes);
