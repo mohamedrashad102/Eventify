@@ -1,3 +1,4 @@
+import AppError from "../middlewares/AppError.js";
 import Event from "../models/Event.js";
 import mongoose from "mongoose";
 
@@ -94,9 +95,11 @@ const getEvents = async (req, res) => {
             },
         });
     } catch (error) {
-        error.status = 500;
-        error.message = "Server error while retrieving events";
-        throw error;
+        res.status(500).json({
+            success: false,
+            message: "Server error while retrieving events",
+        });
+        // throw new AppError("Server error while retrieving events", 500);
     }
 };
 
@@ -108,14 +111,10 @@ const getEvent = async (req, res) => {
 
         // ensure id exists and valid
         if (!id) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Event ID is required" });
+            throw new AppError("Event ID is required", 400);
         }
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Invalid Event ID" });
+            throw new AppError("Invalid Event ID", 400);
         }
 
         // search for event by id
@@ -126,9 +125,7 @@ const getEvent = async (req, res) => {
 
         // ensure it exists
         if (!existingEvent) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Event not found" });
+            throw new AppError("Event not found", 404);
         }
 
         // send reposnse with event data
@@ -138,9 +135,7 @@ const getEvent = async (req, res) => {
             data: existingEvent,
         });
     } catch (error) {
-        error.status = 500;
-        error.message = "Server error while retrieving event";
-        throw error;
+        throw new AppError("Server error while retrieving event", 500);
     }
 };
 
@@ -156,13 +151,11 @@ const createEvent = async (req, res) => {
             capacity,
             price,
         } = req.body;
-        const creatorId = req.user?._id || req.user?.id || req.body.createdBy; // based on how auth middleware sets user info
+        
+        const creatorId = req.user?.id || req.body.createdBy;
 
         if (!creatorId || !mongoose.Types.ObjectId.isValid(creatorId)) {
-            return res.status(400).json({
-                success: false,
-                message: "The event creator not found",
-            });
+            throw AppError.unauthorized("Authentication required to create event");
         }
 
         // create new event instance + save it in db
@@ -185,9 +178,7 @@ const createEvent = async (req, res) => {
             data: newEvent,
         });
     } catch (error) {
-        error.status = 500;
-        error.message = "Server error while creating event";
-        throw error;
+        throw new AppError("Server error while creating event", 500);
     }
 };
 
@@ -199,14 +190,10 @@ const updateEvent = async (req, res) => {
 
         // ensure id exists and valid
         if (!id) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Event ID is required" });
+            throw new AppError("Event ID is required", 400);
         }
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Invalid Event ID" });
+            throw new AppError("Invalid Event ID", 400);
         }
 
         // search for event by id
@@ -214,9 +201,7 @@ const updateEvent = async (req, res) => {
 
         // ensure event exists
         if (!existingEvent) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Event not found" });
+            throw new AppError("Event not found", 404);
         }
 
         // update event fields + save
@@ -243,9 +228,7 @@ const updateEvent = async (req, res) => {
             data: existingEvent,
         });
     } catch (error) {
-        error.status = 500;
-        error.message = "Server error while updating event";
-        throw error;
+        throw new AppError("Server error while updating event", 500);
     }
 };
 
@@ -256,22 +239,16 @@ const deleteEvent = async (req, res) => {
 
         // ensure id exists and valid
         if (!id) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Event ID is required" });
+            throw new AppError("Event ID is required", 400);
         }
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res
-                .status(400)
-                .json({ success: false, message: "Invalid Event ID" });
+            throw new AppError("Invalid Event ID", 400);
         }
 
         // delete event
         const deletedEvent = await Event.findByIdAndDelete(id);
         if (!deletedEvent) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Event not found" });
+            throw new AppError("Event not found", 404);
         }
 
         // send response confirming deletion
@@ -280,9 +257,7 @@ const deleteEvent = async (req, res) => {
             message: "Event deleted successfully",
         });
     } catch (error) {
-        error.status = 500;
-        error.message = "Server error while deleting event";
-        throw error;
+        throw new AppError("Server error while deleting event", 500);
     }
 };
 

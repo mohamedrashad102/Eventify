@@ -1,18 +1,15 @@
+import AppError from "./AppError.js";
+
 const validateRequestBody = (req, res, next) => {
     const data = req.body;
     // ensure body exists and not empty
     if (!data || Object.keys(data).length === 0) {
-        return res
-            .status(400)
-            .json({ success: false, message: "Request body is required" });
+        throw new AppError("Request body is required", 400);
     }
 
     // check data format
     if (typeof data !== "object") {
-        return res.status(400).json({
-            success: false,
-            message: "Request body must be a valid JSON object",
-        });
+        throw new AppError("Request body must be a valid JSON object", 400);
     }
 
     next();
