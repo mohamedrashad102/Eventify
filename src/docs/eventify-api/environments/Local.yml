@@ -1,3 +1,4 @@
+name: Local
 variables:
   - name: baseUrl
     value: http://localhost:3000
@@ -6,18 +7,15 @@ variables:
   - name: timeout
     value: "30000"
   - name: adminEmail
-    value: admin@example.com
-  - name: adminPassword
-    value: ""
-    secret: true
+    value: admin@eventify.com
+  - secret: true
+    name: adminPassword
   - name: userEmail
     value: user@example.com
-  - name: userPassword
-    value: ""
-    secret: true
-  - name: authToken
-    value: ""
-    secret: true
+  - secret: true
+    name: userPassword
+  - secret: true
+    name: authToken
   - name: userId
     value: ""
   - name: eventId
