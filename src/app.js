@@ -5,8 +5,13 @@ import { logger } from './middlewares/loggerMiddleware.js';
 import { apiLimiter } from './middlewares/rateLimiter.js';
 import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
+import eventRoutes from './routes/eventRoutes.js';
 
 const app = express();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Security middleware
 app.use(helmet()); // Set security HTTP headers
@@ -32,7 +37,7 @@ app.get('/', (req, res) => {
 
 // API Routes (to be added by other team members)
 app.use('/api/auth', authRoutes);
-// app.use('/api/events', eventRoutes);
+app.use('/api/events', eventRoutes);
 // app.use('/api/bookings', bookingRoutes);
 // app.use('/api/admin', adminRoutes);
 
