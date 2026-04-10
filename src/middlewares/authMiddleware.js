@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
 import AppError from './AppError.js';
+import { verifyToken } from '../utils/jwtUtils.js';
 
 /**
  * Authentication middleware - Protects routes
@@ -20,7 +20,7 @@ const protect = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = verifyToken(token);
 
     // Attach user info to request
     req.user = {
@@ -72,7 +72,7 @@ const optionalAuth = async (req, res, next) => {
     }
 
     if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = verifyToken(token);
       req.user = {
         id: decoded.id,
         role: decoded.role
