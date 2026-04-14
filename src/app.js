@@ -13,6 +13,9 @@ import authRoutes from "./routes/authRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import adminRoutes from './routes/adminRoutes.js';
+import dns from "node:dns/promises";
+
+dns.setServers(["8.8.8.8"]);
 
 const app = express();
 
