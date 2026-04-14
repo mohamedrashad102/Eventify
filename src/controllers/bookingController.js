@@ -14,8 +14,8 @@ const getUsersBookings = async (req, res, next) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
 
-    // Filter
-    const filter = {};
+    // Filter — only the authenticated user's bookings
+    const filter = { userId: req.user._id };
     if (status) filter.status = status;
 
     // Calculate Skip
@@ -73,7 +73,9 @@ const getSingleBooking = async (req, res, next) => {
     });
   } catch (error) {
     if (error instanceof AppError) return next(error);
-    next(AppError.internalError("An error occurred when retrieving the booking."));
+    next(
+      AppError.internalError("An error occurred when retrieving the booking."),
+    );
   }
 };
 
@@ -87,8 +89,7 @@ const createBooking = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(eventId))
       throw AppError.badRequest("Invalid Event ID.");
 
-    if (!quantity)
-      throw AppError.badRequest("Booking Quantity is required.");
+    if (!quantity) throw AppError.badRequest("Booking Quantity is required.");
     if (quantity < 0)
       throw AppError.badRequest("Booking Quantity must be positive.");
 
@@ -129,7 +130,9 @@ const createBooking = async (req, res, next) => {
     });
   } catch (error) {
     if (error instanceof AppError) return next(error);
-    next(AppError.internalError("An error occurred when creating the booking."));
+    next(
+      AppError.internalError("An error occurred when creating the booking."),
+    );
   }
 };
 
@@ -165,7 +168,9 @@ const updateBookingStatus = async (req, res, next) => {
     });
   } catch (error) {
     if (error instanceof AppError) return next(error);
-    next(AppError.internalError("An error occurred when updating the booking."));
+    next(
+      AppError.internalError("An error occurred when updating the booking."),
+    );
   }
 };
 
@@ -212,7 +217,9 @@ const cancelBooking = async (req, res, next) => {
     });
   } catch (error) {
     if (error instanceof AppError) return next(error);
-    next(AppError.internalError("An error occurred when cancelling the booking."));
+    next(
+      AppError.internalError("An error occurred when cancelling the booking."),
+    );
   }
 };
 
