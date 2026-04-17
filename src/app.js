@@ -1,46 +1,55 @@
-import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
-import { logger } from './middlewares/loggerMiddleware.js';
-import { apiLimiter } from './middlewares/rateLimiter.js';
-import { errorHandler, notFoundHandler } from './middlewares/errorMiddleware.js';
-import authRoutes from './routes/authRoutes.js';
-import eventRoutes from './routes/eventRoutes.js';
+import express from "express";
+import helmet from "helmet";
+import cors from "cors";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { logger } from "./middlewares/loggerMiddleware.js";
+import { apiLimiter } from "./middlewares/rateLimiter.js";
+import {
+  errorHandler,
+  notFoundHandler,
+} from "./middlewares/errorMiddleware.js";
+import authRoutes from "./routes/authRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import adminRoutes from './routes/adminRoutes.js';
+import dns from "node:dns/promises";
+
+dns.setServers(["8.8.8.8"]);
 
 const app = express();
 
 // Swagger configuration
 const swaggerOptions = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Eventify API Documentation',
-            version: '1.0.0',
-            description: 'API documentation for Eventify - Event Management System',
-            contact: {
-                name: 'Eventify Team'
-            }
-        },
-        servers: [
-            {
-                url: 'http://localhost:3000',
-                description: 'Development server'
-            }
-        ],
-        components: {
-            securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT',
-                    description: 'JWT token obtained from /api/auth/login endpoint. Format: "Bearer <token>"'
-                }
-            }
-        }
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Eventify API Documentation",
+      version: "1.0.0",
+      description: "API documentation for Eventify - Event Management System",
+      contact: {
+        name: "Eventify Team",
+      },
     },
-    apis: ['./src/docs/swagger/**/*.yaml']
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Development server",
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description:
+            'JWT token obtained from /api/auth/login endpoint. Format: "Bearer <token>"',
+        },
+      },
+    },
+  },
+  apis: ["./src/docs/swagger/**/*.yaml"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -54,32 +63,32 @@ app.use(helmet()); // Set security HTTP headers
 app.use(cors()); // Enable CORS
 
 // Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Request logging middleware
 app.use(logger);
 
 // Rate limiting
-app.use('/api', apiLimiter);
+app.use("/api", apiLimiter);
 
 // Swagger documentation route
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Basic route
-app.get('/', (req, res) => {
-    res.json({
-        message: 'Eventify API is running!',
-        version: '1.0.0',
-        docs: '/api-docs'
-    });
+app.get("/", (req, res) => {
+  res.json({
+    message: "Eventify API is running!",
+    version: "1.0.0",
+    docs: "/api-docs",
+  });
 });
 
 // API Routes (to be added by other team members)
-app.use('/api/auth', authRoutes);
-app.use('/api/events', eventRoutes);
-// app.use('/api/bookings', bookingRoutes);
-// app.use('/api/admin', adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling middleware (must be last)
 app.use(notFoundHandler); // Handle 404 - undefined routes
