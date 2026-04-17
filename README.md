@@ -23,6 +23,8 @@ Eventify is a Node.js REST API for event management and ticket booking. It suppo
 - express-validator for input validation
 - express-rate-limit for abuse protection
 - Swagger UI for API documentation
+- Jest for testing
+- Supertest for HTTP endpoint testing
 
 ## Project Structure
 
@@ -40,6 +42,12 @@ src/
   models/                Mongoose schemas
   routes/                API route definitions
   utils/                 Validation and JWT helpers
+tests/
+  setup.js               Shared test environment setup
+  integration/
+    auth.test.js         Auth route tests
+    event.test.js        Event route tests
+    booking.test.js      Booking/Admin route tests
 .env                     Environment variables
 ```
 
@@ -130,6 +138,35 @@ The project includes a Bruno collection under `docs/eventify-api` with organized
 
 Use the collection to run and test requests locally against the API.
 
+## Testing
+
+The project uses Jest and Supertest for automated API tests.
+
+### Run Tests
+
+```bash
+npm test
+```
+
+### Current Test Coverage
+
+- Auth routes:
+  - Register success and validation failure
+  - Login success and invalid credentials
+- Event routes:
+  - Public get all events
+  - Public get single event
+  - Admin create, update, and delete event
+- Booking/Admin routes:
+  - User get bookings, get single booking, create booking, cancel booking
+  - Admin update booking status
+  - Admin get all bookings
+
+### Notes
+
+- Tests are designed to run fast and deterministically by mocking model/auth dependencies.
+- The test suite runs in-band to avoid ESM/Jest concurrency issues in this setup.
+
 ## Development Notes
 
 - The server loads configuration from `.env` at the project root
@@ -143,7 +180,7 @@ Use the collection to run and test requests locally against the API.
 npm run dev        # Start the server in development mode
 npm start          # Start the server in production mode
 npm run seed:admin # Seed an initial admin account
-npm test           # Placeholder test script
+npm test           # Run Jest integration tests
 ```
 
 ## License
