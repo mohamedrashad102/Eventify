@@ -20,3 +20,5 @@ variables:
     value: ""
   - name: eventId
     value: ""
+  - name: bookingId
+    value: ""
