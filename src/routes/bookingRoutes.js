@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
-  createBooking,
   cancelBooking,
-  getUsersBookings,
+  createBooking,
   getSingleBooking,
+  getUsersBookings,
   updateBookingStatus,
 } from "../controllers/bookingController.js";
 import { authorize, protect } from "../middlewares/authMiddleware.js";
@@ -16,7 +16,7 @@ const router = Router();
 router.get("/", protect, getUsersBookings);
 
 // ---- Get Single Booking ----
-router.get("/:id", protect, validateObjectId, getSingleBooking);
+router.get("/:id", protect, ...validateObjectId(), getSingleBooking);
 
 //         ==> POST <==
 // ---- Create new Booking ----
@@ -27,13 +27,13 @@ router.post("/", protect, validateBooking, createBooking);
 router.patch(
   "/:id",
   protect,
-  validateObjectId,
+  ...validateObjectId(),
   authorize(["admin"]),
   updateBookingStatus,
 );
 
 //      ==> DELETE <==
 // ---- Cancel Booking ----
-router.delete("/:id", protect, validateObjectId, cancelBooking);
+router.delete("/:id", protect, ...validateObjectId(), cancelBooking);
 
 export default router;
