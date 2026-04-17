@@ -1,19 +1,19 @@
+import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import cors from "cors";
+import dns from "node:dns/promises";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { logger } from "./middlewares/loggerMiddleware.js";
-import { apiLimiter } from "./middlewares/rateLimiter.js";
 import {
   errorHandler,
   notFoundHandler,
 } from "./middlewares/errorMiddleware.js";
-import authRoutes from "./routes/authRoutes.js";
-import eventRoutes from "./routes/eventRoutes.js";
-import bookingRoutes from "./routes/bookingRoutes.js";
+import { logger } from "./middlewares/loggerMiddleware.js";
+import { apiLimiter } from "./middlewares/rateLimiter.js";
 import adminRoutes from './routes/adminRoutes.js';
-import dns from "node:dns/promises";
+import authRoutes from "./routes/authRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
 
 dns.setServers(["8.8.8.8"]);
 
@@ -49,7 +49,7 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ["./src/docs/swagger/**/*.yaml"],
+  apis: ["./docs/swagger/**/*.yaml"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

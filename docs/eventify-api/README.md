@@ -7,7 +7,8 @@ This is a [Bruno](https://www.usebruno.com/) API collection for the Eventify API
 ```
 eventify-api/
 ├── opencollection.yml              # Collection root (REQUIRED)
-├── collection.yml                  # Collection-level settings├── .gitignore                     # Git ignore file
+├── collection.yml                  # Collection-level settings
+├── .gitignore                      # Git ignore file
 ├── environments/                  # Environment configurations
 │   ├── Local.yml                  # Local development (localhost:3000)
 │   └── Production.yml             # Production deployment
@@ -15,13 +16,23 @@ eventify-api/
 │   ├── folder.yml                 # Folder settings
 │   ├── Register User.yml          # POST /api/auth/register
 │   └── Login User.yml             # POST /api/auth/login
-└── Events/                        # Event management endpoints
-    ├── folder.yml                 # Folder settings
-    ├── GetAllEvents.yml           # GET /api/events
-    ├── GetEvent.yml               # GET /api/events/:id
-    ├── CreateEvent.yml            # POST /api/events (admin)
-    ├── UpdateEvent.yml            # PUT /api/events/:id (admin)
-    └── DeleteEvent.yml            # DELETE /api/events/:id (admin)
+├── Events/                         # Event management endpoints
+│   ├── folder.yml                 # Folder settings
+│   ├── GetAllEvents.yml           # GET /api/events
+│   ├── GetEvent.yml               # GET /api/events/:id
+│   ├── CreateEvent.yml            # POST /api/events (admin)
+│   ├── UpdateEvent.yml            # PUT /api/events/:id (admin)
+│   └── DeleteEvent.yml            # DELETE /api/events/:id (admin)
+├── Booking/                        # Booking management endpoints
+│   ├── folder.yml                 # Folder settings
+│   ├── Get User Bookings.yml      # GET /api/bookings
+│   ├── Get Single Booking.yml     # GET /api/bookings/:id
+│   ├── Create Booking.yml         # POST /api/bookings
+│   ├── Update Booking Status.yml   # PATCH /api/bookings/:id (admin)
+│   └── Cancel Booking.yml          # DELETE /api/bookings/:id
+└── Admin/                          # Admin management endpoints
+   ├── folder.yml                 # Folder settings
+   └── Get All Bookings.yml       # GET /api/admin/bookings
 ```
 
 ## Getting Started
@@ -66,29 +77,37 @@ eventify-api/
    - Run `GetAllEvents` to see all events
    - Run `GetEvent` to view a specific event
 
-5. **Update/Delete Events** (requires admin token)
+5. **Book Events**
+   - Run `Create Booking` after selecting an `eventId`
+   - Run `Get User Bookings` or `Get Single Booking` to inspect saved bookings
+
+6. **Update/Delete Events** (requires admin token)
    - Run `UpdateEvent` or `DeleteEvent`
+
+7. **Manage Booking Status** (requires admin token)
+   - Run `Get All Bookings` or `Update Booking Status`
 
 ### Environment Variables
 
 The collection uses several environment variables:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `baseUrl` | API base URL | `http://localhost:3000` |
-| `adminEmail` | Admin email for login | (empty) |
-| `adminPassword` | Admin password for login | (empty) |
-| `authToken` | JWT token (auto-saved) | (empty) |
-| `eventId` | Event ID (auto-saved) | (empty) |
-| `userId` | User ID (auto-saved) | (empty) |
+| Variable        | Description              | Default                 |
+| --------------- | ------------------------ | ----------------------- |
+| `baseUrl`       | API base URL             | `http://localhost:3000` |
+| `adminEmail`    | Admin email for login    | (empty)                 |
+| `adminPassword` | Admin password for login | (empty)                 |
+| `authToken`     | JWT token (auto-saved)   | (empty)                 |
+| `eventId`       | Event ID (auto-saved)    | (empty)                 |
+| `bookingId`     | Booking ID (auto-saved)  | (empty)                 |
+| `userId`        | User ID (auto-saved)     | (empty)                 |
 
 ### Authentication Flow
 
 The collection handles authentication automatically:
 
 1. Login request saves the token to `{{authToken}}`
-2. All admin endpoints use `{{authToken}}` for Bearer authentication
-3. Token is automatically attached to requests in the Events folder
+2. Authenticated requests use `{{authToken}}` for Bearer authentication
+3. Token is automatically attached to requests in the Events, Booking, and Admin folders
 
 ## Running with Bruno CLI
 
@@ -104,6 +123,8 @@ bru run --env Local
 # Run specific folder
 bru run --env Local --folder "Auth"
 bru run --env Local --folder "Events"
+bru run --env Local --folder "Booking"
+bru run --env Local --folder "Admin"
 
 # Generate HTML report
 bru run --env Local --reporter-html results.html
@@ -152,7 +173,7 @@ bru run --env Local --tests
 ## Tips
 
 1. **Start with Local environment** - Update credentials as needed
-2. **Run requests in order** - Auth first, then events
+2. **Run requests in order** - Auth first, then events, then bookings
 3. **Use variables** - Don't hardcode values, use `{{variables}}`
 4. **Check tests tab** - See test results after each request
 5. **Git commit** - Collection changes are tracked in Git
@@ -166,6 +187,10 @@ bru run --env Local --tests
 ### Event Not Found Error
 - Run `GetAllEvents` or `CreateEvent` first
 - Ensure `{{eventId}}` environment variable is set
+
+### Booking Not Found Error
+- Run `Create Booking`, `Get User Bookings`, or `Get All Bookings` first
+- Ensure `{{bookingId}}` environment variable is set
 
 ### 403 Forbidden
 - Ensure you're logged in with an **admin** account

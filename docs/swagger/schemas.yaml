@@ -136,6 +136,85 @@ components:
           description: Last update timestamp
           example: "2026-04-10T10:00:00.000Z"
 
+    BookingUserRef:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: User ID
+          example: "60d5ec49f1b2c8b1f8e4e1a1"
+        name:
+          type: string
+          example: "Mohamed Rashad"
+        email:
+          type: string
+          format: email
+          example: "mohamed@example.com"
+
+    BookingEventRef:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Event ID
+          example: "60d5ec49f1b2c8b1f8e4e1a2"
+        title:
+          type: string
+          example: "Music Festival 2026"
+        date:
+          type: string
+          format: date-time
+          example: "2026-08-15T18:00:00.000Z"
+        location:
+          type: string
+          example: "Central Park, New York"
+
+    Booking:
+      type: object
+      required:
+        - userId
+        - eventId
+        - quantity
+        - totalPrice
+      properties:
+        _id:
+          type: string
+          description: Auto-generated MongoDB ID
+          example: "60d5ec49f1b2c8b1f8e4e1b0"
+        userId:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/BookingUserRef'
+          description: User reference or populated user object
+        eventId:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/BookingEventRef'
+          description: Event reference or populated event object
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+        totalPrice:
+          type: number
+          minimum: 0
+          example: 100
+        status:
+          type: string
+          enum:
+            - pending
+            - confirmed
+            - cancelled
+          example: pending
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-04-10T10:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-04-10T10:00:00.000Z"
+
     Error:
       type: object
       properties:

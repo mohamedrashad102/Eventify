@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import User from '../models/User.js';
 
 // Load environment variables
-dotenv.config({ path: './src/.env' });
+dotenv.config({ path: './.env' });
 
 const seedAdmin = async () => {
     try {
