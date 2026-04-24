@@ -59,6 +59,14 @@ const eventSchema = new Schema(
             enum: ["upcoming", "ongoing", "completed", "cancelled"],
             default: "upcoming",
         },
+        image: {
+            type: String,
+            default: "/files/images/event-placeholder.svg",
+        },
+        imagePublicId: {
+            type: String,
+            default: null,
+        },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: "user",
