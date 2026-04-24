@@ -1,6 +1,10 @@
 import AppError from "../middlewares/AppError.js";
 import Event from "../models/Event.js";
 import mongoose from "mongoose";
+import {
+    deleteCloudinaryImage,
+    uploadImageBuffer,
+} from "../utils/cloudinaryUpload.js";
 
 // ======= Get all events (public) =======
 // /api/events?page=1&limit=10&search=music&category=concert&sort=date&order=desc
@@ -150,6 +154,7 @@ const createEvent = async (req, res) => {
             category,
             capacity,
             price,
+            imageUrl
         } = req.body;
         
         const creatorId = req.user?.id || req.body.createdBy;
@@ -169,6 +174,17 @@ const createEvent = async (req, res) => {
             price: Number(price),
             createdBy: creatorId,
         });
+
+        // if image is provided, set it to the event
+        if (imageUrl && imageUrl.trim() !== "") {
+            newEvent.image = imageUrl.trim();
+        } else if (req.file) {
+            const uploadedImage = await uploadImageBuffer(req.file.buffer);
+            newEvent.image = uploadedImage.secure_url;
+            newEvent.imagePublicId = uploadedImage.public_id;
+        }
+
+        // save the event to the database
         await newEvent.save();
 
         // send response with the created event data
@@ -178,6 +194,7 @@ const createEvent = async (req, res) => {
             data: newEvent,
         });
     } catch (error) {
+        if (error instanceof AppError) throw error;
         throw new AppError("Server error while creating event", 500);
     }
 };
@@ -219,6 +236,22 @@ const updateEvent = async (req, res) => {
                 existingEvent[field] = req.body[field];
             }
         });
+
+        if (req.file) {
+            const uploadedImage = await uploadImageBuffer(req.file.buffer);
+            if (existingEvent.imagePublicId) {
+                await deleteCloudinaryImage(existingEvent.imagePublicId);
+            }
+            existingEvent.image = uploadedImage.secure_url;
+            existingEvent.imagePublicId = uploadedImage.public_id;
+        } else if (req.body.imageUrl && req.body.imageUrl.trim() !== "") {
+            if (existingEvent.imagePublicId) {
+                await deleteCloudinaryImage(existingEvent.imagePublicId);
+                existingEvent.imagePublicId = null;
+            }
+            existingEvent.image = req.body.imageUrl.trim();
+        }
+
         await existingEvent.save();
 
         // send reposnse with the updated event data
@@ -228,6 +261,7 @@ const updateEvent = async (req, res) => {
             data: existingEvent,
         });
     } catch (error) {
+        if (error instanceof AppError) throw error;
         throw new AppError("Server error while updating event", 500);
     }
 };
@@ -251,12 +285,17 @@ const deleteEvent = async (req, res) => {
             throw new AppError("Event not found", 404);
         }
 
+        if (deletedEvent.imagePublicId) {
+            await deleteCloudinaryImage(deletedEvent.imagePublicId);
+        }
+
         // send response confirming deletion
         res.status(200).json({
             success: true,
             message: "Event deleted successfully",
         });
     } catch (error) {
+        if (error instanceof AppError) throw error;
         throw new AppError("Server error while deleting event", 500);
     }
 };
